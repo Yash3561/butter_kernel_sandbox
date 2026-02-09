@@ -122,7 +122,7 @@ export default function Home() {
 
     const pass1Start = performance.now();
 
-    setInputText(prev => prev + char.toLowerCase());
+    setInputText(prev => prev + char);
 
     const keyCoord = keyMap.find(k => k.char === char.toLowerCase());
     if (keyCoord) {
