@@ -177,7 +177,22 @@ export default function Home() {
 
   const handleSpace = useCallback(() => {
     const currentWord = inputText.split(' ').pop() || '';
-    const wordToAccept = candidates.length > 0 ? candidates[0].word : currentWord;
+    const suggestedWord = candidates.length > 0 ? candidates[0].word : currentWord;
+
+    // Preserve the case of the originally typed word
+    let wordToAccept = suggestedWord;
+    if (currentWord.length > 0) {
+      // Check if first letter was uppercase
+      const firstCharUpper = currentWord[0] === currentWord[0].toUpperCase() && currentWord[0] !== currentWord[0].toLowerCase();
+      // Check if all uppercase
+      const allUpper = currentWord === currentWord.toUpperCase() && currentWord !== currentWord.toLowerCase();
+
+      if (allUpper) {
+        wordToAccept = suggestedWord.toUpperCase();
+      } else if (firstCharUpper) {
+        wordToAccept = suggestedWord.charAt(0).toUpperCase() + suggestedWord.slice(1).toLowerCase();
+      }
+    }
 
     const words = inputText.split(' ');
     words[words.length - 1] = wordToAccept;
