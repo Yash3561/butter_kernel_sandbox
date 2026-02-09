@@ -102,20 +102,19 @@ export default function Keyboard({ onTap, onLayoutReady, onBackspace, onSpace, o
 
     const handleKeyClick = useCallback((char: string, e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        const displayChar = mode === 'letters' && capsLock ? char.toUpperCase() : char;
         setActiveKey(char);
         setTimeout(() => setActiveKey(null), 100);
 
-        const keyEl = keyRefs.current.get(char);
-        if (keyEl && keyboardRef.current) {
-            const keyboardRect = keyboardRef.current.getBoundingClientRect();
-            const keyRect = keyEl.getBoundingClientRect();
-            const x = keyRect.left - keyboardRect.left + keyRect.width / 2;
-            const y = keyRect.top - keyboardRect.top + keyRect.height / 2;
-
-            onTap({ x, y, timestamp: Date.now() });
+        // For letters, always use onDirectInput with proper case
+        if (mode === 'letters') {
+            const outputChar = capsLock ? char.toUpperCase() : char.toLowerCase();
+            onDirectInput(outputChar);
+            return;
         }
-    }, [onTap, mode, capsLock]);
+
+        // For numbers/symbols, use onDirectInput directly
+        onDirectInput(char);
+    }, [onDirectInput, mode, capsLock]);
 
     const toggleMode = () => {
         setMode(prev => prev === 'letters' ? 'numbers' : 'letters');
